@@ -24,4 +24,4 @@ Using XML is the best way to transact informations like documents, at the same t
 
 The standard is designed to be a general purpose Smart Contract to help everyone to decentralize pieces of information that are redable from every device. 
 
-
+### Updates available as soon as possible ;)
