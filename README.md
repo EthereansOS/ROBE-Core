@@ -4,7 +4,7 @@
 
 ## Abstract
 
-A standard to integrate XML code into Non Fungible Tokens, to set a standard to decentralize non financial things like documents, art and even burnable or scriptable applications. 
+A standard to integrate XML code into Non Fungible Tokens, to set a standard to decentralize non financial things like documents, art and even burnable or scriptable applications on top of it. 
 
 ## Decentralize non scripted things?
 
