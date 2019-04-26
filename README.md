@@ -24,6 +24,10 @@ Using XML is the best way to transact informations like documents, at the same t
 
 The standard is designed to be a general purpose Smart Contract to help everyone to decentralize pieces of information that are redable from every device. 
 
+## PS:
+
+We dont ICO, just BUIDL, so... More informations in the code!
+
 ### Updates available as soon as possible ;)
 
 ##### Disclamer: This idea is designed to help everyone to transact non scriptable objects, we'll be happy to see every fork and every kind of improvement. As every decentralized and unstoppable things with a lot of usages, bad actors will be able to use it. We will be happy to cooperate and help every good use of this idea, but we cannot be responsible for malicious users. This protocol was created to give people a simple way to decentralize things without trusting third parties.
