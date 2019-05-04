@@ -1,5 +1,7 @@
 pragma solidity ^0.5.0;
 
+import "./IERC721.sol";
+
 /**
   * @title Robe
   * @dev An open standard based on Ethereum ERC 721 to build unique NFT with XML information
@@ -9,30 +11,25 @@ pragma solidity ^0.5.0;
   * @author Marco Vasapollo <ceo@metaring.com>
   * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
 */
-interface IRobe {
+contract IRobe is IERC721 {
 
     /**
       * Creates a new ERC 721 NFT
       * @return a unique tokenId
       */
-    function create(bytes calldata payload) external returns(uint256);
+    function mint(bytes calldata payload) external returns(uint256);
 
     /**
       * Attaches a new ERC 721 NFT to an already-existing Token
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function attach(uint256 tokenId, bytes calldata payload) external returns(uint256);
+    function mint(uint256 tokenId, bytes calldata payload) external returns(uint256);
 
     /**
       * @return all the tokenIds that composes the givend NFT
       */
     function getChain(uint256 tokenId) external view returns(uint256[] memory);
-
-    /**
-     * @return the owner's address of the given NFT
-     */
-    function getOwner(uint256 tokenId) external view returns(address);
 
     /**
      * @return the content of a NFT
@@ -59,9 +56,4 @@ interface IRobe {
      * @return all the owners' addresses of the given NFT
      */
     function getOwners(uint256 tokenId) external view returns(address[] memory);
-
-    /**
-     * @return true if the given NFT is owned by the given address. False otherwise
-     */
-    function isOwnedBy(uint256 tokenId, address owner) external view returns(bool);
 }
