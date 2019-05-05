@@ -34,11 +34,11 @@ contract Robe is IRobe {
     //Registers the chain of composed NFT
     mapping(uint256 => uint256[]) private _chain;
 
-    //Register the position of the NFT in its chain
+    //Registers the position of the NFT in its chain
     mapping(uint256 => uint256) private _positionInChain;
 
     //Registers the root NFT of each NFT
-    mapping(uint256 => uint256) private _parent;
+    mapping(uint256 => uint256) private _root;
 
     //The content of each NFT
     bytes[] private _data;
@@ -68,21 +68,26 @@ contract Robe is IRobe {
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function mint(uint256 tokenId, bytes memory payload) public returns(uint256) {
-        return _mintAndOrAttach(tokenId, payload, msg.sender);
+    function mint(uint256 rootTokenId, bytes memory payload) public returns(uint256) {
+        return _mintAndOrAttach(rootTokenId, payload, msg.sender);
     }
 
-    function _mintAndOrAttach(uint256 tokenId, bytes memory payload, address owner) private returns(uint256) {
+    function _mintAndOrAttach(uint256 rootTokenId, bytes memory payload, address owner) private returns(uint256) {
         uint256 newTokenId = _data.length;
+        if(rootTokenId != newTokenId) {
+            require(_owner[rootTokenId] == owner, "Extend an already-existing chain of someone else is forbidden");
+        }
         if(_syntaxCheckerAddress != _voidAddress) {
-            require(_syntaxChecker.check(tokenId, newTokenId, owner, payload, _myAddress), "Invalid payload Syntax");
+            require(_syntaxChecker.check(rootTokenId, newTokenId, owner, payload, _myAddress), "Invalid payload Syntax");
         }
         _data.push(payload);
-        _owner[newTokenId] = owner;
+        if(rootTokenId == newTokenId) {
+            _owner[rootTokenId] = owner;
+        }
         _balance[owner] = _balance[owner] + 1;
-        _positionInChain[newTokenId] = _chain[tokenId].length;
-        _chain[tokenId].push(newTokenId);
-        _parent[newTokenId] = tokenId;
+        _root[newTokenId] = rootTokenId;
+        _positionInChain[newTokenId] = _chain[rootTokenId].length;
+        _chain[rootTokenId].push(newTokenId);
         return newTokenId;
     }
 
@@ -90,7 +95,14 @@ contract Robe is IRobe {
       * @return all the tokenIds that composes the givend NFT
       */
     function getChain(uint256 tokenId) public view returns(uint256[] memory) {
-        return _chain[_parent[tokenId]];
+        return _chain[_root[tokenId]];
+    }
+
+    /**
+      * @return the root NFT of this tokenId
+      */
+    function getRoot(uint256 tokenId) public view returns(uint256) {
+        return _root[tokenId];
     }
 
     /**
@@ -119,18 +131,7 @@ contract Robe is IRobe {
      * @return the position in the chain, the owner's address and content of the given NFT
      */
     function getCompleteInfo(uint256 tokenId) public view returns(uint256, address, bytes memory) {
-        return (_positionInChain[tokenId], _owner[tokenId], _data[tokenId]);
-    }
-
-    /**
-     * @return all the owners' addresses of the given NFT
-     */
-    function getOwners(uint256 tokenId) public view returns(address[] memory) {
-        address[] memory owners = new address[](_chain[tokenId].length);
-        for(uint256 i = 0; i < _chain[tokenId].length; i++) {
-            owners[i] = _owner[_chain[tokenId][i]];
-        }
-        return owners;
+        return (_positionInChain[tokenId], _owner[_root[tokenId]], _data[tokenId]);
     }
 
     function balanceOf(address owner) public view returns (uint256 balance) {
@@ -138,26 +139,27 @@ contract Robe is IRobe {
     }
 
     function ownerOf(uint256 tokenId) public view returns (address owner) {
-        return _owner[tokenId];
+        return _owner[_root[tokenId]];
     }
 
     function approve(address to, uint256 tokenId) public {
+        require(_root[tokenId] == tokenId, "Only root NFTs can be approved");
         require(msg.sender == _owner[tokenId], "Only owner can approve operators");
         _tokenOperator[tokenId] = to;
         emit Approval(msg.sender, to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address operator) {
+        require(_root[tokenId] == tokenId, "Only root NFTs can be approved");
         operator = _tokenOperator[tokenId];
-        if(operator == address(0)) {
+        if(operator == _voidAddress) {
             operator = _ownerOperator[_owner[tokenId]];
         }
-        return operator;
     }
 
     function setApprovalForAll(address operator, bool _approved) public {
         if(!_approved && operator == _ownerOperator[msg.sender]) {
-            _ownerOperator[msg.sender] = address(0);
+            _ownerOperator[msg.sender] = _voidAddress;
         }
         if(_approved) {
             _ownerOperator[msg.sender] = operator;
@@ -182,12 +184,13 @@ contract Robe is IRobe {
     }
 
     function _transferFrom(address sender, address from, address to, uint256 tokenId) private {
+        require(_root[tokenId] == tokenId, "Only root NFTs can be transfered");
         require(_owner[tokenId] == from, "Given from is not the owner of given tokenId");
         require(from == sender || getApproved(tokenId) == sender, "Sender not allowed to transfer this tokenId");
         _owner[tokenId] = to;
         _balance[from] = _balance[from] - 1;
         _balance[to] = _balance[to] + 1;
-        _tokenOperator[tokenId] = address(0);
+        _tokenOperator[tokenId] = _voidAddress;
         emit Transfer(from, to, tokenId);
     }
 

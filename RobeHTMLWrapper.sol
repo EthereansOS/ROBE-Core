@@ -5,13 +5,12 @@ import "./IRobeSyntaxChecker.sol";
 
 /**
   * @title A simple HTML syntax checker
-  * 
   * @author Marco Vasapollo <ceo@metaring.com>
   * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
 */
 contract RobeHTMLSyntaxChecker is IRobeSyntaxChecker {
 
-    function check(uint256 tokenId, uint256 newTokenId, address owner, bytes memory payload, address robeAddress) public view returns(bool) {
+    function check(uint256 rootTokenId, uint256 newTokenId, address owner, bytes memory payload, address robeAddress) public view returns(bool) {
        //Extremely trivial and simplistic control coded in less than 30 seconds. We will make a more accurate one later
         require(payload[0] == "<");
         require(payload[1] == "h");

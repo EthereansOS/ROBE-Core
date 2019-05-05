@@ -24,12 +24,17 @@ contract IRobe is IERC721 {
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function mint(uint256 tokenId, bytes calldata payload) external returns(uint256);
+    function mint(uint256 previousTokenId, bytes calldata payload) external returns(uint256);
 
     /**
       * @return all the tokenIds that composes the givend NFT
       */
     function getChain(uint256 tokenId) external view returns(uint256[] memory);
+
+    /**
+      * @return the root NFT of this tokenId
+      */
+    function getRoot(uint256 tokenId) external view returns(uint256);
 
     /**
      * @return the content of a NFT
@@ -51,9 +56,4 @@ contract IRobe is IERC721 {
      * @return the position in the chain, the owner's address and content of the given NFT
      */
     function getCompleteInfo(uint256 tokenId) external view returns(uint256, address, bytes memory);
-
-    /**
-     * @return all the owners' addresses of the given NFT
-     */
-    function getOwners(uint256 tokenId) external view returns(address[] memory);
 }
