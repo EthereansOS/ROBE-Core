@@ -1,0 +1,130 @@
+<html>
+
+<head>
+    <link rel="stylesheet"
+        href="https://ipfs.io/ipfs/QmQHcYCzFXDbPb4piqKhh7x5YcEXtRJgc94tbzivAoFRV7/css/bootstrap.min.css" />
+    <script type="text/javascript">
+        window.contractABI = [{"outputs":[{"name":"","type":"bytes"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getContent","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":false,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"},{"name":"html","type":"string"}],"name":"mint","type":"function"},{"outputs":[{"name":"owner","type":"address"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"ownerOf","type":"function"},{"outputs":[{"name":"","type":"uint128"},{"name":"","type":"address"},{"name":"","type":"string"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getCompleteInfoInHTML","type":"function"},{"outputs":[{"name":"","type":"uint128"},{"name":"","type":"address"},{"name":"","type":"bytes"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getCompleteInfo","type":"function"},{"outputs":[{"name":"operator","type":"address"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getApproved","type":"function"},{"outputs":[{"name":"","type":"uint128[]"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getChain","type":"function"},{"outputs":[{"name":"balance","type":"uint128"}],"constant":true,"payable":false,"inputs":[{"name":"owner","type":"address"}],"name":"balanceOf","type":"function"},{"outputs":[{"name":"","type":"string"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getHTML","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getPositionOf","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokenId","type":"uint128"}],"name":"transferFrom","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":false,"payable":false,"inputs":[{"name":"payload","type":"bytes"}],"name":"mint","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"}],"name":"getRoot","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokenId","type":"uint128"}],"name":"safeTransferFrom","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"to","type":"address"},{"name":"tokenId","type":"uint128"}],"name":"approve","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"operator","type":"address"},{"name":"_approved","type":"bool"}],"name":"setApprovalForAll","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":true,"payable":false,"inputs":[{"name":"tokenId","type":"uint128"},{"name":"position","type":"uint128"}],"name":"getTokenIdAt","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":false,"payable":false,"inputs":[{"name":"rootTokenId","type":"uint128"},{"name":"payload","type":"bytes"}],"name":"mint","type":"function"},{"outputs":[{"name":"","type":"uint128"}],"constant":false,"payable":false,"inputs":[{"name":"html","type":"string"}],"name":"mint","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"sender","type":"address"},{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokenId","type":"uint128"},{"name":"data","type":"bytes"}],"name":"_safeTransferFrom","type":"function"},{"outputs":[],"constant":false,"payable":false,"inputs":[{"name":"from","type":"address"},{"name":"to","type":"address"},{"name":"tokenId","type":"uint128"},{"name":"data","type":"bytes"}],"name":"safeTransferFrom","type":"function"},{"outputs":[{"name":"","type":"bool"}],"constant":true,"payable":false,"inputs":[{"name":"owner","type":"address"},{"name":"operator","type":"address"}],"name":"isApprovedForAll","type":"function"},{"outputs":[],"payable":false,"inputs":[{"name":"syntaxCheckerAddress","type":"address"}],"name":"","type":"constructor"},{"outputs":[],"payable":true,"inputs":[],"name":"","type":"fallback"},{"outputs":[],"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":true,"name":"tokenId","type":"uint128"}],"name":"Transfer","anonymous":false,"type":"event"},{"outputs":[],"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"approved","type":"address"},{"indexed":true,"name":"tokenId","type":"uint128"}],"name":"Approval","anonymous":false,"type":"event"},{"outputs":[],"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"operator","type":"address"},{"indexed":false,"name":"approved","type":"bool"}],"name":"ApprovalForAll","anonymous":false,"type":"event"}];
+    </script>
+    <script type="text/javascript"
+        src="https://ipfs.io/ipfs/QmQHcYCzFXDbPb4piqKhh7x5YcEXtRJgc94tbzivAoFRV7/jquery/jquery.min.js"></script>
+    <script type="text/javascript"
+        src="https://ipfs.io/ipfs/QmQHcYCzFXDbPb4piqKhh7x5YcEXtRJgc94tbzivAoFRV7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">Give us your ROBE Contract Address</div>
+            <div class="row"><input id="contract" type="text" /></div>
+            <div class="row">Or simply use <a href="#" onclick="useOurContract();"> ours </a> (On AION mastery Testnet)
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">Place your html Here</div>
+            <div class="row"><textarea id="html"></textarea></div>
+            <div class="row"><button type="button" class="btn" onclick="deploy();">DEPLOY IT!</button></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="row">Place your tokenId here</div>
+        <div class="row"><input id="tokenId" type="text" /></div>
+        <div class="row">Or simply use <a href="#" onclick="useOurTokenId();">ours</a></div>
+        <div class="row"><button type="button" class="btn" onclick="retrieve()">RETRIEVE IT!</button></div>
+    </div>
+    <div class="row">
+        <div id="result" class="col-md-12"></div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            setTimeout(function () {
+                if (typeof window.aiwa === 'undefined') {
+                    $('#result').html('<a target="_blank" href="https://chrome.google.com/webstore/detail/aiwa/objigohafkcoodmofgmifblmfidicehc">Get AIWA</a>');
+                    alert('AIWA plugin is needed! Please install it then refresh page.');
+                    return;
+                }
+                window.aiwa.enable().catch(function () {
+                    alert('AIWA plugin is needed! Please refresh page and give consent to use it.');
+                });
+            }, 700);
+        });
+
+        function getContract() {
+            var contractAddress = $('#contract').val();
+            if (contractAddress === undefined || contractAddress === null || contractAddress.split(' ').join('') === '') {
+                alert('Specify a contract first!');
+                return;
+            }
+            contractAddress = contractAddress.split(' ').join('');
+            return aionweb3.eth.contract(window.contractABI).at(contractAddress);
+        }
+
+        function useOurContract() {
+            $('#contract').val('0xa05c5651ce65E3DdF19397f3b3F0629ea17F4d09bFa6cc6dD47906A47bD0d17A');
+        }
+
+        function useOurTokenId() {
+            $('#tokenId').val('0');
+        }
+
+        function deploy() {
+            var contract = getContract();
+            if(contract === undefined) {
+                return;
+            }
+            var html = $('#html').val();
+            if (html === undefined || html === null || html.split(' ').join('') === '') {
+                alert('Specify your html first!');
+                return;
+            }
+            $('#result').html('Please wait for the transaction to be submitted...');
+            contract.mint.string(html).then(function(result) {
+                $('#result').html('Transaction submitted! Follow it <a target="_blank" href="https://mastery.aion.network/#/transaction/' + result + '">here</a>. Do several refreshes until it appears.');
+                var loop = function(error, r) {
+                    if(error) {
+                        console.error(error);
+                        alert("An Error has occured! :( please watch your browser's console log");
+                        return;
+                    }
+                    if(r === undefined || r === null) {
+                        setTimeout(function() {
+                            aionweb3.eth.getTransaction(result, loop);
+                        }, 2000);
+                        return;
+                    }
+                    $('#tokenId').val(r.value.toNumber());
+                    retrieve();
+                };
+                loop();
+            }).catch(function(error) {
+                console.error(error);
+                alert("An Error has occured! :( please watch your browser's console log");
+            });
+        }
+
+        function retrieve() {
+            var contract = getContract();
+            if(contract === undefined) {
+                return;
+            }
+            var tokenId = document.getElementById('tokenId').value;
+            if (tokenId === undefined || tokenId === null || tokenId.split(' ').join('') === '') {
+                alert('We need a tokenId to do this!');
+                return;
+            }
+            tokenId = parseInt(tokenId.split(' ').join(''));
+            contract.getHTML(tokenId, function(error, result) {
+                if(error) {
+                    console.error(error);
+                    alert("An Error has occured! :( please watch your browser's console log");
+                    return;
+                }
+                $('#result').html(result);
+            });
+        }
+    </script>
+</body>
+
+</html>

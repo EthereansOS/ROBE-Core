@@ -1,6 +1,4 @@
-pragma solidity ^0.5.0;
-
-import "./IERC721.sol";
+pragma solidity ^0.4.0;
 
 /**
   * @title Robe
@@ -11,49 +9,49 @@ import "./IERC721.sol";
   * @author Marco Vasapollo <ceo@metaring.com>
   * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
 */
-contract IRobe is IERC721 {
+interface IRobe {
 
     /**
       * Creates a new ERC 721 NFT
       * @return a unique tokenId
       */
-    function mint(bytes calldata payload) external returns(uint256);
+    function mint(bytes payload) public returns(uint);
 
     /**
       * Attaches a new ERC 721 NFT to an already-existing Token
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function mint(uint256 previousTokenId, bytes calldata payload) external returns(uint256);
+    function mint(uint previousTokenId, bytes payload) public returns(uint);
 
     /**
       * @return all the tokenIds that composes the givend NFT
       */
-    function getChain(uint256 tokenId) external view returns(uint256[] memory);
+    function getChain(uint tokenId) public constant returns(uint[] memory);
 
     /**
       * @return the root NFT of this tokenId
       */
-    function getRoot(uint256 tokenId) external view returns(uint256);
+    function getRoot(uint tokenId) public constant returns(uint);
 
     /**
      * @return the content of a NFT
      */
-    function getContent(uint256 tokenId) external view returns(bytes memory);
+    function getContent(uint tokenId) public constant returns(bytes memory);
 
     /**
      * @return the position in the chain of this NFT
      */
-    function getPositionOf(uint256 tokenId) external view returns(uint256);
+    function getPositionOf(uint tokenId) public constant returns(uint);
 
     /**
      * @return the tokenId of the passed NFT at the given position
      */
-    function getTokenIdAt(uint256 tokenId, uint256 position) external view returns(uint256);
+    function getTokenIdAt(uint tokenId, uint position) public constant returns(uint);
 
     /**
      * Syntactic sugar
      * @return the position in the chain, the owner's address and content of the given NFT
      */
-    function getCompleteInfo(uint256 tokenId) external view returns(uint256, address, bytes memory);
+    function getCompleteInfo(uint tokenId) public constant returns(uint, address, bytes memory);
 }

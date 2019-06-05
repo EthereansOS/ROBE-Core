@@ -1,6 +1,7 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.0;
 
 import "./IRobe.sol";
+import "./IERC721.sol";
 import "./IRobeSyntaxChecker.sol";
 import "./IERC721Receiver.sol";
 
@@ -10,40 +11,40 @@ import "./IERC721Receiver.sol";
   * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
   * @author The OpenZeppelin ERC721 Implementation for the safeTransferFrom method. Thank you guys!
 */
-contract Robe is IRobe {
+contract Robe is IRobe, IERC721 {
 
-    address private _voidAddress = address(0);
+    address internal _voidAddress = address(0);
 
-    address private _myAddress;
+    address internal _myAddress;
 
-    address private _syntaxCheckerAddress;
-    IRobeSyntaxChecker private _syntaxChecker;
+    address internal _syntaxCheckerAddress;
+    IRobeSyntaxChecker internal _syntaxChecker;
 
     //Registers the owner of each NFT
-    mapping(uint256 => address) private _owner;
+    mapping(uint => address) private _owner;
 
     //Registers the balance for each owner
-    mapping(address => uint256) private _balance;
+    mapping(address => uint) private _balance;
 
     //Registers the approved operators that can transfer the ownership of a specific NFT
-    mapping(uint256 => address) private _tokenOperator;
+    mapping(uint => address) private _tokenOperator;
 
     //Registers the approved operators that can transfer the ownership of all the NFTs of a specific owner
     mapping(address => address) private _ownerOperator;
 
     //Registers the chain of composed NFT
-    mapping(uint256 => uint256[]) private _chain;
+    mapping(uint => uint[]) private _chain;
 
     //Registers the position of the NFT in its chain
-    mapping(uint256 => uint256) private _positionInChain;
+    mapping(uint => uint) private _positionInChain;
 
     //Registers the root NFT of each NFT
-    mapping(uint256 => uint256) private _root;
+    mapping(uint => uint) private _root;
 
     //The content of each NFT
     bytes[] private _data;
 
-    constructor(address syntaxCheckerAddress) public {
+    function Robe(address syntaxCheckerAddress) public {
         _myAddress = address(this);
         if(syntaxCheckerAddress != _voidAddress) {
             _syntaxCheckerAddress = syntaxCheckerAddress;
@@ -51,15 +52,15 @@ contract Robe is IRobe {
         }
     }
 
-    function() external payable {
-        revert("ETH not accepted");
+    function() public payable {
+        revert();
     }
 
     /**
       * Creates a new ERC 721 NFT
       * @return a unique tokenId
       */
-    function mint(bytes memory payload) public returns(uint256) {
+    function mint(bytes memory payload) public returns(uint) {
         return _mintAndOrAttach(_data.length, payload, msg.sender);
     }
 
@@ -68,17 +69,17 @@ contract Robe is IRobe {
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function mint(uint256 rootTokenId, bytes memory payload) public returns(uint256) {
+    function mint(uint rootTokenId, bytes memory payload) public returns(uint) {
         return _mintAndOrAttach(rootTokenId, payload, msg.sender);
     }
 
-    function _mintAndOrAttach(uint256 rootTokenId, bytes memory payload, address owner) private returns(uint256) {
-        uint256 newTokenId = _data.length;
+    function _mintAndOrAttach(uint rootTokenId, bytes memory payload, address owner) private returns(uint) {
+        uint newTokenId = _data.length;
         if(rootTokenId != newTokenId) {
-            require(_owner[rootTokenId] == owner, "Extend an already-existing chain of someone else is forbidden");
+            require(_owner[rootTokenId] == owner);
         }
         if(_syntaxCheckerAddress != _voidAddress) {
-            require(_syntaxChecker.check(rootTokenId, newTokenId, owner, payload, _myAddress), "Invalid payload Syntax");
+            require(_syntaxChecker.check(rootTokenId, newTokenId, owner, payload, _myAddress));
         }
         _data.push(payload);
         if(rootTokenId == newTokenId) {
@@ -94,35 +95,35 @@ contract Robe is IRobe {
     /**
       * @return all the tokenIds that composes the givend NFT
       */
-    function getChain(uint256 tokenId) public view returns(uint256[] memory) {
+    function getChain(uint tokenId) public constant returns(uint[] memory) {
         return _chain[_root[tokenId]];
     }
 
     /**
       * @return the root NFT of this tokenId
       */
-    function getRoot(uint256 tokenId) public view returns(uint256) {
+    function getRoot(uint tokenId) public constant returns(uint) {
         return _root[tokenId];
     }
 
     /**
      * @return the content of a NFT
      */
-    function getContent(uint256 tokenId) public view returns(bytes memory) {
+    function getContent(uint tokenId) public constant returns(bytes memory) {
         return _data[tokenId];
     }
 
     /**
      * @return the position in the chain of this NFT
      */
-    function getPositionOf(uint256 tokenId) public view returns(uint256) {
+    function getPositionOf(uint tokenId) public constant returns(uint) {
         return _positionInChain[tokenId];
     }
 
     /**
      * @return the tokenId of the passed NFT at the given position
      */
-    function getTokenIdAt(uint256 tokenId, uint256 position) public view returns(uint256) {
+    function getTokenIdAt(uint tokenId, uint position) public constant returns(uint) {
         return _chain[tokenId][position];
     }
 
@@ -130,27 +131,27 @@ contract Robe is IRobe {
      * Syntactic sugar
      * @return the position in the chain, the owner's address and content of the given NFT
      */
-    function getCompleteInfo(uint256 tokenId) public view returns(uint256, address, bytes memory) {
+    function getCompleteInfo(uint tokenId) public constant returns(uint, address, bytes memory) {
         return (_positionInChain[tokenId], _owner[_root[tokenId]], _data[tokenId]);
     }
 
-    function balanceOf(address owner) public view returns (uint256 balance) {
+    function balanceOf(address owner) public constant returns (uint balance) {
         return _balance[owner];
     }
 
-    function ownerOf(uint256 tokenId) public view returns (address owner) {
+    function ownerOf(uint tokenId) public constant returns (address owner) {
         return _owner[_root[tokenId]];
     }
 
-    function approve(address to, uint256 tokenId) public {
-        require(_root[tokenId] == tokenId, "Only root NFTs can be approved");
-        require(msg.sender == _owner[tokenId], "Only owner can approve operators");
+    function approve(address to, uint tokenId) public {
+        require(_root[tokenId] == tokenId);
+        require(msg.sender == _owner[tokenId]);
         _tokenOperator[tokenId] = to;
-        emit Approval(msg.sender, to, tokenId);
+        Approval(msg.sender, to, tokenId);
     }
 
-    function getApproved(uint256 tokenId) public view returns (address operator) {
-        require(_root[tokenId] == tokenId, "Only root NFTs can be approved");
+    function getApproved(uint tokenId) public constant returns (address operator) {
+        require(_root[tokenId] == tokenId);
         operator = _tokenOperator[tokenId];
         if(operator == _voidAddress) {
             operator = _ownerOperator[_owner[tokenId]];
@@ -164,42 +165,58 @@ contract Robe is IRobe {
         if(_approved) {
             _ownerOperator[msg.sender] = operator;
         }
-        emit ApprovalForAll(msg.sender, operator, _approved);
+        ApprovalForAll(msg.sender, operator, _approved);
     }
 
-    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+    function isApprovedForAll(address owner, address operator) public constant returns (bool) {
         return _ownerOperator[owner] == operator;
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public {
+    function transferFrom(address from, address to, uint tokenId) public {
         _transferFrom(msg.sender, from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public {
+    function safeTransferFrom(address from, address to, uint tokenId) public {
         _safeTransferFrom(msg.sender, from, to, tokenId, "");
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) public {
+    function safeTransferFrom(address from, address to, uint tokenId, bytes memory data) public {
         _safeTransferFrom(msg.sender, from, to, tokenId, data);
     }
 
-    function _transferFrom(address sender, address from, address to, uint256 tokenId) private {
-        require(_root[tokenId] == tokenId, "Only root NFTs can be transfered");
-        require(_owner[tokenId] == from, "Given from is not the owner of given tokenId");
-        require(from == sender || getApproved(tokenId) == sender, "Sender not allowed to transfer this tokenId");
+    function _transferFrom(address sender, address from, address to, uint tokenId) private {
+        require(_root[tokenId] == tokenId);
+        require(_owner[tokenId] == from);
+        require(from == sender || getApproved(tokenId) == sender);
         _owner[tokenId] = to;
         _balance[from] = _balance[from] - 1;
         _balance[to] = _balance[to] + 1;
         _tokenOperator[tokenId] = _voidAddress;
-        emit Transfer(from, to, tokenId);
+        Transfer(from, to, tokenId);
     }
 
-    function _safeTransferFrom(address sender, address from, address to, uint256 tokenId, bytes memory data) public {
+    function _safeTransferFrom(address sender, address from, address to, uint tokenId, bytes memory data) public {
         _transferFrom(sender, from, to, tokenId);
-        uint256 size;
-        assembly { size := extcodesize(to) }
-        require(size <= 0, "Receiver address is not a contract");
         bytes4 retval = IERC721Receiver(to).onERC721Received(msg.sender, from, tokenId, data);
-        require(retval == 0x150b7a02, "Receiver address does not support the onERC721Received method");
+        require(retval == 0x150b7a02);
+    }
+}
+
+/**
+  * @title A simple HTML syntax checker
+  * @author Marco Vasapollo <ceo@metaring.com>
+  * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
+*/
+contract RobeHTMLSyntaxChecker is IRobeSyntaxChecker {
+
+    function check(uint rootTokenId, uint newTokenId, address owner, bytes memory payload, address robeAddress) public constant returns(bool) {
+       //Extremely trivial and simplistic control coded in less than 30 seconds. We will make a more accurate one later
+        require(payload[0] == "<");
+        require(payload[1] == "h");
+        require(payload[2] == "t");
+        require(payload[3] == "m");
+        require(payload[4] == "l");
+        require(payload[5] == ">");
+        return true;
     }
 }

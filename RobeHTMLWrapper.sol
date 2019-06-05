@@ -1,26 +1,6 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.4.0;
 
 import "./Robe.sol";
-import "./IRobeSyntaxChecker.sol";
-
-/**
-  * @title A simple HTML syntax checker
-  * @author Marco Vasapollo <ceo@metaring.com>
-  * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
-*/
-contract RobeHTMLSyntaxChecker is IRobeSyntaxChecker {
-
-    function check(uint256 rootTokenId, uint256 newTokenId, address owner, bytes memory payload, address robeAddress) public view returns(bool) {
-       //Extremely trivial and simplistic control coded in less than 30 seconds. We will make a more accurate one later
-        require(payload[0] == "<");
-        require(payload[1] == "h");
-        require(payload[2] == "t");
-        require(payload[3] == "m");
-        require(payload[4] == "l");
-        require(payload[5] == ">");
-        return true;
-    }
-}
 
 /**
   * @title A simple HTML-based Robe NFT
@@ -30,23 +10,28 @@ contract RobeHTMLSyntaxChecker is IRobeSyntaxChecker {
 */
 contract RobeHTMLWrapper is Robe {
 
-    constructor() Robe(address(new RobeHTMLSyntaxChecker())) public {
+    function RobeHTMLWrapper(address syntaxCheckerAddress) public {
+        _myAddress = address(this);
+        if(syntaxCheckerAddress != _voidAddress) {
+            _syntaxCheckerAddress = syntaxCheckerAddress;
+            _syntaxChecker = IRobeSyntaxChecker(_syntaxCheckerAddress);
+        }
     }
 
-    function create(string memory html) public returns(uint256) {
-        return super.create(bytes(html));
+    function mint(string memory html) public returns(uint) {
+        return super.mint(bytes(html));
     }
 
-    function attach(uint256 tokenId, string memory html) public returns(uint256) {
-        return super.attach(tokenId, bytes(html));
+    function mint(uint tokenId, string memory html) public returns(uint) {
+        return super.mint(tokenId, bytes(html));
     }
 
-    function getHTML(uint256 tokenId) public view returns(string memory) {
+    function getHTML(uint tokenId) public constant returns(string memory) {
         return string(super.getContent(tokenId));
     }
 
-    function getCompleteInfoInHTML(uint256 tokenId) public view returns(uint256, address, string memory) {
-        (uint256 position, address owner, bytes memory payload) = super.getCompleteInfo(tokenId);
+    function getCompleteInfoInHTML(uint tokenId) public constant returns(uint, address, string memory) {
+        var (position, owner, payload) = super.getCompleteInfo(tokenId);
         return (position, owner, string(payload));
     }
 }

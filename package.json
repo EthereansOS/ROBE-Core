@@ -1,0 +1,28 @@
+{
+  "name": "robe-aion-evm",
+  "version": "1.0.0",
+  "description": "Robe Implementation for the AION EVM Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nft-robe/Robe.git"
+  },
+  "keywords": [
+    "robe",
+    "nft",
+    "aion",
+    "evm"
+  ],
+  "author": "Marco Vasapollo <ceo@metaring.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nft-robe/Robe/issues"
+  },
+  "homepage": "https://github.com/nft-robe/Robe#readme",
+  "dependencies": {
+    "aion-web3": "git+https://github.com/aionnetwork/aion_web3.git"
+  }
+}
