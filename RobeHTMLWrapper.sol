@@ -33,12 +33,12 @@ contract RobeHTMLWrapper is Robe {
     constructor() Robe(address(new RobeHTMLSyntaxChecker())) public {
     }
 
-    function create(string memory html) public returns(uint256) {
-        return super.create(bytes(html));
+    function mint(string memory html) public returns(uint256) {
+        return super.mint(bytes(html));
     }
 
-    function attach(uint256 tokenId, string memory html) public returns(uint256) {
-        return super.attach(tokenId, bytes(html));
+    function mint(uint256 tokenId, string memory html) public returns(uint256) {
+        return super.mint(tokenId, bytes(html));
     }
 
     function getHTML(uint256 tokenId) public view returns(string memory) {
