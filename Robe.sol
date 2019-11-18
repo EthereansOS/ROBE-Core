@@ -39,6 +39,9 @@ contract Robe is IRobe {
 
     //Registers the root NFT of each NFT
     mapping(uint256 => uint256) private _root;
+    
+    //Registers finalized tokens
+    mapping(uint256 => bool) private _finalized;
 
     //The content of each NFT
     bytes[] private _data;
@@ -60,7 +63,11 @@ contract Robe is IRobe {
       * @return a unique tokenId
       */
     function mint(bytes memory payload) public returns(uint256) {
-        return _mintAndOrAttach(_data.length, payload, msg.sender);
+        return _mintAndOrAttach(_data.length, payload, msg.sender, false);
+    }
+    
+    function mintAndFinalize(bytes memory payload) public returns(uint256) {
+        return _mintAndOrAttach(_data.length, payload, msg.sender, true);
     }
 
     /**
@@ -69,13 +76,18 @@ contract Robe is IRobe {
       * @return a unique tokenId
       */
     function mint(uint256 rootTokenId, bytes memory payload) public returns(uint256) {
-        return _mintAndOrAttach(rootTokenId, payload, msg.sender);
+        return _mintAndOrAttach(rootTokenId, payload, msg.sender, false);
+    }
+    
+    function mintAndFinalize(uint256 rootTokenId, bytes memory payload) public returns(uint256) {
+        return _mintAndOrAttach(rootTokenId, payload, msg.sender, true);
     }
 
-    function _mintAndOrAttach(uint256 rootTokenId, bytes memory payload, address owner) private returns(uint256) {
-        uint256 newTokenId = _data.length;
+    function _mintAndOrAttach(uint256 rootTokenId, bytes memory payload, address owner, bool finalize) private returns(uint256 newTokenId) {
+        newTokenId = _data.length;
         if(rootTokenId != newTokenId) {
-            require(_owner[rootTokenId] == owner, "Extend an already-existing chain of someone else is forbidden");
+            require(_owner[rootTokenId] == owner, "Cannot extend an already-existing chain of someone else is forbidden");
+            require(!_finalized[rootTokenId], "Root token is finalized");
         }
         if(_syntaxCheckerAddress != _voidAddress) {
             require(_syntaxChecker.check(rootTokenId, newTokenId, owner, payload, _myAddress), "Invalid payload Syntax");
@@ -88,7 +100,23 @@ contract Robe is IRobe {
         _root[newTokenId] = rootTokenId;
         _positionInChain[newTokenId] = _chain[rootTokenId].length;
         _chain[rootTokenId].push(newTokenId);
-        return newTokenId;
+        emit Mint(rootTokenId, newTokenId, owner);
+        if(finalize) {
+            _finalized[rootTokenId] = true;
+            emit Finalize(rootTokenId);
+        }
+    }
+    
+    function finalize(uint256 tokenId) public {
+        uint256 rootTokenId = _root[tokenId];
+        require(_owner[rootTokenId] == msg.sender, "Cannot finalize an already-existing chain of someone else is forbidden");
+        require(!_finalized[rootTokenId], "Root token is finalized");
+        _finalized[rootTokenId] = true;
+        emit Finalize(rootTokenId);
+    }
+    
+    function isFinalized(uint256 tokenId) public view returns(bool) {
+        return _finalized[_root[tokenId]];
     }
 
     /**

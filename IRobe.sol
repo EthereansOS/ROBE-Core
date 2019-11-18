@@ -18,13 +18,21 @@ contract IRobe is IERC721 {
       * @return a unique tokenId
       */
     function mint(bytes calldata payload) external returns(uint256);
+    
+    function mintAndFinalize(bytes calldata payload) external returns(uint256);
 
     /**
       * Attaches a new ERC 721 NFT to an already-existing Token
       * to create a composed NFT
       * @return a unique tokenId
       */
-    function mint(uint256 previousTokenId, bytes calldata payload) external returns(uint256);
+    function mint(uint256 rootTokenId, bytes calldata payload) external returns(uint256);
+    
+    function mintAndFinalize(uint256 rootTokenId, bytes calldata payload) external returns(uint256);
+
+    function finalize(uint256 rootTokenId) external;
+    
+    function isFinalized(uint256 tokenId) external view returns(bool);
 
     /**
       * @return all the tokenIds that composes the givend NFT
@@ -56,4 +64,8 @@ contract IRobe is IERC721 {
      * @return the position in the chain, the owner's address and content of the given NFT
      */
     function getCompleteInfo(uint256 tokenId) external view returns(uint256, address, bytes memory);
+    
+    event Mint(uint256 indexed rootTokenId, uint256 indexed newTokenId, address indexed sender);
+    
+    event Finalize(uint256 indexed rootTokenId);
 }
