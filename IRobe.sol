@@ -5,9 +5,9 @@ import "./IERC721.sol";
 /**
   * @title Robe
   * @dev An open standard based on Ethereum ERC 721 to build unique NFT with XML information
-  * 
+  *
   * @dev This is the main Inteface that identifies a Robe NFT
-  * 
+  *
   * @author Marco Vasapollo <ceo@metaring.com>
   * @author Alessandro Mario Lagana Toschi <alet@risepic.com>
 */
@@ -18,7 +18,7 @@ contract IRobe is IERC721 {
       * @return a unique tokenId
       */
     function mint(bytes calldata payload) external returns(uint256);
-    
+
     function mintAndFinalize(bytes calldata payload) external returns(uint256);
 
     /**
@@ -27,11 +27,11 @@ contract IRobe is IERC721 {
       * @return a unique tokenId
       */
     function mint(uint256 rootTokenId, bytes calldata payload) external returns(uint256);
-    
+
     function mintAndFinalize(uint256 rootTokenId, bytes calldata payload) external returns(uint256);
 
     function finalize(uint256 rootTokenId) external;
-    
+
     function isFinalized(uint256 tokenId) external view returns(bool);
 
     /**
@@ -64,8 +64,8 @@ contract IRobe is IERC721 {
      * @return the position in the chain, the owner's address and content of the given NFT
      */
     function getCompleteInfo(uint256 tokenId) external view returns(uint256, address, bytes memory);
-    
+
     event Mint(uint256 indexed rootTokenId, uint256 indexed newTokenId, address indexed sender);
-    
+
     event Finalize(uint256 indexed rootTokenId);
 }
