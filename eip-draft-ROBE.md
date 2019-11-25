@@ -9,7 +9,6 @@ created: (2019-04-19)
 requires: 721
 ---
 
-
 ## Simple Summary
 A simple way to put files and code into chained NFTs to improve the decentralization of modern Dapps and DAOs
 
