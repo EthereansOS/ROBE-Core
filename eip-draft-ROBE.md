@@ -1,7 +1,7 @@
 ---
 eip: <to be assigned>
 title: Chained NFTs to put Files and Code On-Chain
-author: Marco Vasapollo <bro@buidl.life> Alessandro Mario Lagana Toschi <bro@buidl.life>
+author: Marco Vasapollo <marcovasapollo> Alessandro Mario Lagana Toschi <alet89>
 status: Draft
 type: Standards Track
 category: ERC
